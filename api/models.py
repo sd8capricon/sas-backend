@@ -38,7 +38,7 @@ class Course(models.Model):
 class Attendance(models.Model):
     date = models.DateTimeField(auto_now=True)
     student_status = models.BooleanField(null=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student_roll_no = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.PROTECT)
 
     def __str__(self):

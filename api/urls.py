@@ -3,6 +3,7 @@ from api import views
 
 urlpatterns = [
     path('student/', views.student_details),
+    path('teacher/', views.teacher_details),
     path('course/', views.course),
     path('attendance/', views.attendance),
 ]
