@@ -51,11 +51,12 @@ def attendance(request):
         if serialzer.is_valid():
             serialzer.save()
         else:
-            Response({"error": "err"})
+            print(serialzer.errors)
+            return Response({"error": "err"})
         return Response(serialzer.data)
 
 # {
-# "student_roll_no_id": 2,
-# "course_id":  2,
+# "student_roll_no": 2,
+# "course":  2,
 # "student_status": false
 # }

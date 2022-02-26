@@ -36,7 +36,7 @@ class AttendanceSerialzer(serializers.ModelSerializer):
     
     class Meta:
         model = Attendance
-        fields = ['date', 'student_roll_no', 'student_fname', 'student_lname', 'course_id', 'course_name', 'course_taught_by_fname', 'course_taught_by_lname']
+        fields = ['date', 'student_roll_no', 'student_fname', 'student_lname', 'student_status', 'course_id', 'course_name', 'course_taught_by_fname', 'course_taught_by_lname']
 
     def get_course_id(self, attendance):
         course_id = attendance.course.course_id
