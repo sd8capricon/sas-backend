@@ -8,7 +8,7 @@ class Student(models.Model):
     roll_no = models.BigAutoField(primary_key=True)
     f_name = models.CharField(max_length=20)
     l_name = models.CharField(max_length=20)
-    percentage_attendance = models.FloatField(null=True)
+    total_attendance_percentage = models.FloatField(null=True)
 
     def __str__(self):
         return str(self.roll_no) + " " + self.f_name
@@ -38,7 +38,7 @@ class Course(models.Model):
 class Attendance(models.Model):
     date = models.DateTimeField(auto_now=True)
     student_status = models.BooleanField(null=True)
-    student_roll_no = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.PROTECT)
 
     def __str__(self):

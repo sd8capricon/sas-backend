@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.serializers import AttendanceSerialzer, CourseSerializer, StudentSerializer, TeacherSerializer
+from api.serializers import AttendanceSerializer, CourseSerializer, StudentSerializer, TeacherSerializer
 from .models import Attendance, Course, Student, Teacher
 
 
@@ -44,10 +44,10 @@ def course(request):
 def attendance(request):
     if request.method == 'GET':
         attendance = Attendance.objects.all()
-        serialzer = AttendanceSerialzer(attendance, many = True)
+        serialzer = AttendanceSerializer(attendance, many = True)
         return Response(serialzer.data)
     if request.method == 'POST':
-        serialzer = AttendanceSerialzer(data=request.data)
+        serialzer = AttendanceSerializer(data=request.data)
         if serialzer.is_valid():
             serialzer.save()
         else:
