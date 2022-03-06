@@ -43,3 +43,9 @@ class Attendance(models.Model):
 
     def __str__(self):
         return str(self.student)
+
+# TODO: make lec model
+# class Lecture(models.Model):
+#     date = models.DateField()
+#     time = models.TimeField()
+#     lec_no = models.IntegerField()

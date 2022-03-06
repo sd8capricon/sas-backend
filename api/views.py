@@ -39,12 +39,13 @@ def course(request):
             course_name = request.data['course_name']
             taught_by_id = request.data['taught_by']
             taught_by = Teacher.objects.get(pk = taught_by_id)
-            course = Course(course_name = course_name, taught_by = taught_by_id)
+            course = Course(course_name = course_name, taught_by = taught_by)
             course.save()
             serialzer = CourseViewSerializer(course)
             return Response(serialzer.data)
         except Exception as e:
             return HttpResponse(e)
+
 
 
 @api_view(['GET', 'POST'])
