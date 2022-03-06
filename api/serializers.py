@@ -1,5 +1,3 @@
-from dataclasses import fields
-from statistics import mode
 from rest_framework import serializers
 from .models import Student, Teacher, Course, Attendance
 
@@ -32,4 +30,4 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attendance
-        fields = '__all__'
+        fields = ('date', 'student_status', 'student', 'course')

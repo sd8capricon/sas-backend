@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -47,16 +48,14 @@ def attendance(request):
         serialzer = AttendanceSerializer(attendance, many = True)
         return Response(serialzer.data)
     if request.method == 'POST':
-        serialzer = AttendanceSerializer(data=request.data)
-        if serialzer.is_valid():
-            serialzer.save()
-        else:
-            print(serialzer.errors)
-            return Response({"error": "err"})
-        return Response(serialzer.data)
+        student = Student.objects.get(pk = request.data['student'])
+        course = Course.objects.get(pk = request.data['course'])
+        attendance = Attendance(student_status = request.data['student_status'], student = student, course = course)
+        attendance.save()
+        return(HttpResponse("Hello"))
 
 # {
-# "student_roll_no": 2,
-# "course":  2,
+# "student": 2,
+# "course":  1,
 # "student_status": false
 # }
