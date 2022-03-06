@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import Student, Teacher, Course, Attendance
 
 class StudentSerializer(serializers.ModelSerializer):
+    # enrolled_courses = CourseViewSerializer()
+    
     class Meta:
         model = Student
         fields = '__all__'
@@ -12,10 +14,11 @@ class TeacherSerializer(serializers.ModelSerializer):
         fields = ('teacher_id', 'f_name', 'l_name')
 
 class CourseViewSerializer(serializers.ModelSerializer):
-
+    enrolled_students = StudentSerializer(many=True)
+    taught_by = TeacherSerializer()
     class Meta:
         model = Course
-        fields = '__all__'
+        fields = ('course_id', 'course_name', 'taught_by', 'enrolled_students')
 
 class CourseSerializer(serializers.ModelSerializer):
     taught_by = TeacherSerializer()

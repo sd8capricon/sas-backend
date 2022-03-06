@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.serializers import AttendanceSerializer, CourseSerializer, StudentSerializer, TeacherSerializer
+from api.serializers import AttendanceSerializer, CourseSerializer, CourseViewSerializer, StudentSerializer, TeacherSerializer
 from .models import Attendance, Course, Student, Teacher
 
 
@@ -32,27 +32,43 @@ def teacher_details(request):
 def course(request):
     if request.method == 'GET':
         course = Course.objects.all()
-        serialzer = CourseSerializer(course, many = True)
+        serialzer = CourseViewSerializer(course, many = True)
         return Response(serialzer.data)
     elif request.method == 'POST':
-        course = CourseSerializer(data = request.data)
-        if course.is_valid():
+        try:
+            course_name = request.data['course_name']
+            taught_by_id = request.data['taught_by']
+            taught_by = Teacher.objects.get(pk = taught_by_id)
+            course = Course(course_name = course_name, taught_by = taught_by_id)
             course.save()
-        return Response(course.data)
+            serialzer = CourseViewSerializer(course)
+            return Response(serialzer.data)
+        except Exception as e:
+            return HttpResponse(e)
 
 
 @api_view(['GET', 'POST'])
-def attendance(request):
+def attendance(request, course_id):
     if request.method == 'GET':
-        attendance = Attendance.objects.all()
+        attendance = Attendance.objects.all().filter(course=course_id)
         serialzer = AttendanceSerializer(attendance, many = True)
         return Response(serialzer.data)
     if request.method == 'POST':
-        student = Student.objects.get(pk = request.data['student'])
-        course = Course.objects.get(pk = request.data['course'])
-        attendance = Attendance(student_status = request.data['student_status'], student = student, course = course)
-        attendance.save()
-        return(HttpResponse("Hello"))
+        students = request.data
+        for student in students:
+            student_id = student['student']
+            try:
+                s = Student.objects.get(pk = student_id)
+                course = Course.objects.get(pk = course_id)
+                attendance = Attendance(student_status = student['student_status'], student = s, course = course)
+                attendance.save()
+                serialzer = AttendanceSerializer(attendance)
+                return Response(serialzer.data)
+            except Exception as e:
+                print(e)
+                return HttpResponse(e)
+
+# 2022-03-06T19:37:20.142275+05:30
 
 # {
 # "student": 2,

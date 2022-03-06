@@ -28,7 +28,7 @@ class Teacher(models.Model):
 class Course(models.Model):
     course_id = models.BigAutoField(primary_key=True)
     course_name = models.CharField(max_length=20)
-    taught_by = models.ForeignKey(Teacher, null=True, on_delete=models.SET_NULL)
+    taught_by = models.OneToOneField(Teacher, null=True, on_delete=models.SET_NULL)
     enrolled_students = models.ManyToManyField(Student, null=True)
 
     def __str__(self):
