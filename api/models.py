@@ -8,6 +8,7 @@ class Student(models.Model):
     roll_no = models.BigAutoField(primary_key=True)
     f_name = models.CharField(max_length=20)
     l_name = models.CharField(max_length=20)
+    email = models.CharField(max_length=30, null=True)
     total_attendance_percentage = models.FloatField(null=True)
 
     def __str__(self):
@@ -28,7 +29,8 @@ class Teacher(models.Model):
 class Course(models.Model):
     course_id = models.BigAutoField(primary_key=True)
     course_name = models.CharField(max_length=20)
-    taught_by = models.OneToOneField(Teacher, null=True, on_delete=models.SET_NULL)
+    taught_by = models.OneToOneField(
+        Teacher, null=True, on_delete=models.SET_NULL)
     enrolled_students = models.ManyToManyField(Student, null=True)
 
     def __str__(self):
@@ -38,6 +40,7 @@ class Course(models.Model):
 class Attendance(models.Model):
     date = models.DateTimeField(auto_now=True)
     student_status = models.BooleanField(null=True)
+    lec_no = models.IntegerField()
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.PROTECT)
 
@@ -45,7 +48,3 @@ class Attendance(models.Model):
         return str(self.student)
 
 # TODO: make lec model
-# class Lecture(models.Model):
-#     date = models.DateField()
-#     time = models.TimeField()
-#     lec_no = models.IntegerField()
