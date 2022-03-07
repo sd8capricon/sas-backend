@@ -51,6 +51,7 @@ def course(request):
             serialzer = CourseViewSerializer(course)
             return Response(serialzer.data)
         except Exception as e:
+            print(e)
             return HttpResponse(e)
 
 # View and Mark attendance for a course
