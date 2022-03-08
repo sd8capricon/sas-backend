@@ -5,10 +5,10 @@ from django.db import models
 
 
 class Student(models.Model):
-    roll_no = models.BigAutoField(primary_key=True)
+    roll_no = models.IntegerField(primary_key=True, unique=True)
     f_name = models.CharField(max_length=20)
     l_name = models.CharField(max_length=20)
-    email = models.CharField(max_length=30, null=True)
+    email = models.CharField(max_length=30, unique=True, null=True)
     total_attendance_percentage = models.FloatField(null=True)
 
     def __str__(self):
@@ -17,7 +17,7 @@ class Student(models.Model):
 
 class Teacher(models.Model):
     teacher_id = models.BigAutoField(primary_key=True)
-    username = models.CharField(max_length=20)
+    username = models.CharField(max_length=20, unique=True)
     password = models.CharField(max_length=50)
     f_name = models.CharField(max_length=20)
     l_name = models.CharField(max_length=20)
