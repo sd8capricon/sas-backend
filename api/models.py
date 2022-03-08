@@ -42,9 +42,15 @@ class Attendance(models.Model):
     student_status = models.BooleanField(null=True)
     lec_no = models.IntegerField()
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.PROTECT)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.student)
 
-# TODO: make lec model
+class Lec_Stat(models.Model):
+    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+    lec_no = models.IntegerField()
+    students_present = models.IntegerField()
+
+    def __str__(self):
+        return str(self.course_id) + str(self.lec_no) + str(self.students_present)

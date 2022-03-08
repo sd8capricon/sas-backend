@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student, Teacher, Course, Attendance
+from .models import Lec_Stat, Student, Teacher, Course, Attendance
 
 class StudentSerializer(serializers.ModelSerializer):
     # enrolled_courses = CourseViewSerializer()
@@ -33,4 +33,10 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attendance
-        fields = ('date', 'student_status', 'student', 'course')
+        fields = ('date', 'lec_no', 'student_status', 'student', 'course')
+
+class StatSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Lec_Stat
+        fields = '__all__'
