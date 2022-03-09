@@ -48,7 +48,7 @@ class Attendance(models.Model):
         return str(self.student)
 
 class Lec_Stat(models.Model):
-    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     lec_no = models.IntegerField()
     students_present = models.IntegerField()
 

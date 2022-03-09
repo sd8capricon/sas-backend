@@ -173,6 +173,33 @@ def attendance(request, course_id, lec_no):
                     students_present-=1
                 s.student_status = student['student_status']
 
+def total_attendance_percentage(student_roll_no):
+    s = Student.objects.get(pk=student_roll_no)
+    # Getting all attendances where student is present
+    a = Attendance.objects.filter(student=s, student_status=True).count()
+    # Getting all lecs
+    l = Lec_Stat.objects.all().count()
+    percentage = (a/l) * 100
+    s.total_attendane_percentage = percentage
+    s.save()
+
+def course_attendance_percentage(student_roll_no, course_id):
+    try:    
+        s = Student.objects.get(pk=student_roll_no)
+        c = Course.objects.filter(course_id=course_id)
+        # Getting all attendances of a student for a course
+        a = Attendance.objects.filter(student=student, course=course, student_status=True).count()
+        # Getting count of all lecs of a course
+        l = Lec_Stat.objects.filter(course=course).count()
+        percentage = (a/l) * 100
+        res = {
+            'Student Course Attendance': percentage
+        }
+        return Response(res)
+    except Exception as e:
+        error = {'error': str(e)}
+        return Response(error)
+
 # Email to defaultors
 @api_view(['POST'])
 def email_defaultors(request):
