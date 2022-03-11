@@ -18,6 +18,7 @@ def login(request):
         data = request.data
         try:
             teacher = Teacher.objects.get(username = data['username'])
+            # Add logic for hashing
             if (teacher.password == data['password']):
                 token = signJWT(teacher.teacher_id)
                 return Response(token)
@@ -26,6 +27,13 @@ def login(request):
         except Exception as e:
             error = {'error': str(e)}
             return Response(error)
+
+# To verify token
+@api_view(['POST'])
+def verifyToken(request):
+    if request.method == 'POST':
+        decode = decodeJWT(request)
+        return Response(decode)
 
 # View all students
 @api_view(['GET'])

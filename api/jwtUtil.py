@@ -14,7 +14,9 @@ def signJWT(teacher_id):
         'token':token
     }
 
-def decodeJWT(token):
+def decodeJWT(request):
+    authHeader = request.headers['Authorization']
+    token = authHeader.split(' ')[1]
     try:
         decode = jwt.decode(token, secret, algorithms=['HS256'])
         return {

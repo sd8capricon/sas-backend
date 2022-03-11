@@ -3,6 +3,7 @@ from api import views
 
 urlpatterns = [
     path('login/', views.login),
+    path('verify/', views.verifyToken),
     path('students/', views.students_details),
     path('student/<int:roll_no>/', views.student),
     path('teachers/', views.teachers_details),
