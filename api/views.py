@@ -5,11 +5,27 @@ from django.core.mail import send_mail
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.serializers import AttendanceSerializer, CourseSerializer, CourseViewSerializer, StatSerializer, StudentSerializer, TeacherSerializer
+from api.serializers import AttendanceSerializer, CourseSerializer, CourseViewSerializer, StatSerializer, StudentSerializer, TeacherSerializer, TeacherViewSerializer
 from .models import Attendance, Course, Lec_Stat, Student, Teacher
-
+from .jwtUtil import signJWT, decodeJWT
 
 # Create your views here.
+
+# Login Route
+@api_view(['POST'])
+def login(request):
+    if request.method == 'POST':
+        data = request.data
+        try:
+            teacher = Teacher.objects.get(username = data['username'])
+            if (teacher.password == data['password']):
+                token = signJWT(teacher.teacher_id)
+                return Response(token)
+            else:
+                return Response({'error': 'Incorrect Username or Password'})
+        except Exception as e:
+            error = {'error': str(e)}
+            return Response(error)
 
 # View all students
 @api_view(['GET'])
@@ -48,7 +64,7 @@ def student(request, roll_no):
 def teachers_details(request):
     if request.method == 'GET':
         teacher = Teacher.objects.all()
-        serializer = TeacherSerializer(teacher, many=True)
+        serializer = TeacherViewSerializer(teacher, many=True)
         return Response(serializer.data)
 
 @api_view(['GET', 'POST', 'PATCH', 'DELETE'])
@@ -56,17 +72,18 @@ def teacher(request, teacher_id):
     if request.method == 'GET':
         try:
             teacher = Teacher.objects.get(pk=teacher_id)
-            serializer = TeacherSerializer(teacher)
+            serializer = TeacherViewSerializer(teacher)
             return Response(serializer.data)
         except Exception as e:
             error = {'error': str(e)}
             return Response(error)
     elif request.method == 'POST':
         try:
-            teacher = TeacherSerializer(data=request.data)
-            if teacher.is_valid():
-                teacher.save()
-            return Response(teacher.data)
+            data = request.data
+            t = Teacher(username=data['username'], password=data['password'], f_name=data['f_name'], l_name=data['l_name'])
+            t.save()
+            serializer = TeacherViewSerializer(t)
+            return Response(serializer.data)
         except Exception as e:
             error = {'error': str(e)}
             return Response(error)
@@ -126,9 +143,9 @@ def course(request, course_id):
 
 # View and Mark attendance for a course lec by id
 @api_view(['GET', 'POST', 'PATCH'])
-def attendance(request, course_id, lec_no):
+def attendance(request, courseId, lec_no):
     if request.method == 'GET':
-        attendance = Attendance.objects.all().filter(course=course_id, lec_no=lec_no)
+        attendance = Attendance.objects.all().filter(course=courseId, lec_no=lec_no)
         serialzer = AttendanceSerializer(attendance, many=True)
         return Response(serialzer.data)
     elif request.method == 'POST':
@@ -138,29 +155,27 @@ def attendance(request, course_id, lec_no):
         absent_roll_nos = []
         for student in students:
             roll_no = student['student']
-            absent_roll_nos.append(roll_no)
+            absent_roll_nos.append(roll_no)        
         try:
-            course = Course.objects.get(pk=course_id)
+            course = Course.objects.get(pk=courseId)
             for roll_no in range(1, no_of_students+1):
                 s = Student.objects.get(pk=roll_no)
                 attendance = Attendance(lec_no=lec_no, student=s, course=course)
                 if roll_no in absent_roll_nos:
                     attendance.student_status=False
                     students_present-=1
-                else:
-                    attendance.student_status=True
                 attendance.save()
         except Exception as e:
             error = {'error': str(e)}
             return Response(error)
-        stat = Lec_Stat(course_id=course, lec_no=lec_no, students_present=students_present)
+        stat = Lec_Stat(course=course, lec_no=lec_no, students_present=students_present)
         stat.save()
         statSerializer = StatSerializer(stat)
         return Response(statSerializer.data)
     elif request.method == 'PATCH':
         students = request.data
-        course = Course.objects.get(pk=course_id)
-        stat = Lec_Stat.objects.filter(course_id=course, lec_no=lec_no)
+        course = Course.objects.get(pk=courseId)
+        stat = Lec_Stat.objects.filter(course=course, lec_no=lec_no)
         students_present = stat.students_present
         for student in students:
             student_id = student['student']

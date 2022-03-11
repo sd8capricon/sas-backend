@@ -1,3 +1,4 @@
+from pyexpat import model
 from rest_framework import serializers
 from .models import Lec_Stat, Student, Teacher, Course, Attendance
 
@@ -11,7 +12,12 @@ class StudentSerializer(serializers.ModelSerializer):
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
-        fields = ('teacher_id', 'f_name', 'l_name')
+        fields = ('teacher_id', 'f_name', 'l_name', 'username', 'password')
+
+class TeacherViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Teacher
+        fields = ('teacher_id', 'f_name', 'l_name', 'username')
 
 class CourseViewSerializer(serializers.ModelSerializer):
     enrolled_students = StudentSerializer(many=True)
@@ -36,6 +42,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
         fields = ('date', 'lec_no', 'student_status', 'student', 'course')
 
 class StatSerializer(serializers.ModelSerializer):
+    course = CourseSerializer()
 
     class Meta:
         model = Lec_Stat

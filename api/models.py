@@ -5,7 +5,7 @@ from django.db import models
 
 
 class Student(models.Model):
-    roll_no = models.IntegerField(primary_key=True, unique=True)
+    roll_no = models.IntegerField(primary_key=True)
     f_name = models.CharField(max_length=20)
     l_name = models.CharField(max_length=20)
     email = models.CharField(max_length=30, unique=True, null=True)
@@ -39,7 +39,7 @@ class Course(models.Model):
 
 class Attendance(models.Model):
     date = models.DateTimeField(auto_now=True)
-    student_status = models.BooleanField(null=True)
+    student_status = models.BooleanField(null=True, default=True)
     lec_no = models.IntegerField()
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
