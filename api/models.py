@@ -1,4 +1,3 @@
-from pyexpat import model
 from django.db import models
 
 # Create your models here.
@@ -51,6 +50,7 @@ class Lec_Stat(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     lec_no = models.IntegerField()
     students_present = models.IntegerField()
+    attendance_percentage = models.FloatField()
 
     def __str__(self):
         return str(self.course_id) + str(self.lec_no) + str(self.students_present)

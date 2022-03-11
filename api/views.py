@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.db.models import Sum
 from django.core.mail import send_mail
 
 from rest_framework.decorators import api_view
@@ -176,7 +177,8 @@ def attendance(request, courseId, lec_no):
         except Exception as e:
             error = {'error': str(e)}
             return Response(error)
-        stat = Lec_Stat(course=course, lec_no=lec_no, students_present=students_present)
+        percentage = (students_present/no_of_students) * 100
+        stat = Lec_Stat(course=course, lec_no=lec_no, students_present=students_present, attendance_percentage=percentage)
         stat.save()
         statSerializer = StatSerializer(stat)
         return Response(statSerializer.data)
@@ -195,18 +197,44 @@ def attendance(request, courseId, lec_no):
                 else: # Else incoming change is false ie student absent then decrement
                     students_present-=1
                 s.student_status = student['student_status']
+        no_of_students = Student.objects.count()
+        percentage = (students_present/no_of_students) * 100
+        stat.students_present = students_present
+        stat.attendance_percentage = percentage
+        stat.save()
+        serializer = StatSerializer(stat)
+        return Response(serializer.data)
 
-def total_attendance_percentage(student_roll_no):
-    s = Student.objects.get(pk=student_roll_no)
-    # Getting all attendances where student is present
-    a = Attendance.objects.filter(student=s, student_status=True).count()
-    # Getting all lecs
-    l = Lec_Stat.objects.all().count()
-    percentage = (a/l) * 100
-    s.total_attendane_percentage = percentage
-    s.save()
+# Get avg Course Attendance Percentage
+def course_attendance_percentage(course_id):
+    c = Course.objects.get(course_id=course_id)
+    lecs = Lec_Stat.objects.filter(course=c).count()
+    atten_sum = Lec_Stat.objects.filter(course=c).aggregate(Sum('attendance_percentage'))
+    avg_percentage_attendace = atten_sum/lecs
+    print(avg_percentage_attendace)
 
-def course_attendance_percentage(student_roll_no, course_id):
+# Get Student's Total Attendance
+def student_total_attendance_percentage(student_roll_no):
+    try:
+        s = Student.objects.get(pk=student_roll_no)
+        # Getting all attendances where student is present
+        a = Attendance.objects.filter(student=s, student_status=True).count()
+        # Getting all lecs
+        l = Lec_Stat.objects.all().count()
+        percentage = (a/l) * 100
+        s.total_attendane_percentage = percentage
+        s.save()
+        res = {
+            'lecs present': a,
+            'lecs absent': l-a,
+            'percentage attendance': percentage
+        }
+    except Exception as e: 
+        error = {'error': str(e)}
+        return Response(error) 
+
+# Get Student's Course Attendance
+def student_course_attendance_percentage(student_roll_no, course_id):
     try:    
         s = Student.objects.get(pk=student_roll_no)
         c = Course.objects.filter(course_id=course_id)
@@ -216,6 +244,8 @@ def course_attendance_percentage(student_roll_no, course_id):
         l = Lec_Stat.objects.filter(course=course).count()
         percentage = (a/l) * 100
         res = {
+            'lecs present': a,
+            'lecs absent': l-a,
             'Student Course Attendance': percentage
         }
         return Response(res)
