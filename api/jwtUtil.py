@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
+import os
 import jwt
 from pytz import timezone
-secret = 'Pr0ject@2022'
+secret = os.environ.get('JWT_SECRET')
 
 def signJWT(teacher_id):
     payload = {

@@ -1,4 +1,5 @@
 import hashlib
+import os
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -21,7 +22,7 @@ def login(request):
         data = request.data
         try:
             teacher = Teacher.objects.get(username = data['username'])
-            password = data['password'].encode('utf-8')
+            password = (data['password']+os.environ.get('PASS_SALT')).encode('utf-8')
             h = hashlib.sha256(password).hexdigest()
             if (teacher.password == h):
                 token = signJWT(teacher.teacher_id)
@@ -92,7 +93,7 @@ def teacher(request, teacher_id):
     elif request.method == 'POST':
         try:
             data = request.data
-            password = data['password'].encode('utf-8')
+            password = (data['password']+os.environ.get('PASS_SALT')).encode('utf-8')
             h = hashlib.sha256(password).hexdigest()
             t = Teacher(username=data['username'], password=h, f_name=data['f_name'], l_name=data['l_name'])
             t.save()
