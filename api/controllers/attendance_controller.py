@@ -52,18 +52,18 @@ def attendance(req, courseId, lec_no):
     elif req.method == 'PATCH':
         students = req.data
         course = Course.objects.get(pk=courseId)
-        stat = Lec_Stat.objects.filter(course=course, lec_no=lec_no)
+        stat = Lec_Stat.objects.get(course=course, lec_no=lec_no)
         students_present = stat.students_present
         for student in students:
             student_id = student['student']
             s = Student.objects.get(pk=student_id)
-            attendance = Attendance.objects.filter(lec_no=lec_no, student=s, course=course)
-            if student['student_status'] != s.student_status: # Check if incoming status is different
+            attendance = Attendance.objects.get(lec_no=lec_no, student=s, course=course)
+            if student['student_status'] != attendance.student_status: # Check if incoming status is different
                 if student['student_status'] == True: # Incoming change is true ie student present then increment
                     students_present+=1 
                 else: # Else incoming change is false ie student absent then decrement
                     students_present-=1
-                s.student_status = student['student_status']
+                attendance.student_status = student['student_status']
         no_of_students = Student.objects.count()
         percentage = (students_present/no_of_students) * 100
         stat.students_present = students_present

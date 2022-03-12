@@ -20,44 +20,39 @@ def student(req, roll_no):
             return error
     elif req.method == 'POST':
         try:
-            student = StudentSerializer(data=req.data)
-            if student.is_valid():
-                student.save()
-            return student.data
+            data = req.data
+            student = Student(roll_no=data['roll_no'], f_name=data['f_name'], l_name=data['l_name'], email=data['email'])
+            student.save()
+            serializer = StudentSerializer(student)
+            return serializer.data
         except Exception as e:
             error = {'error': str(e)}
             return error
     elif req.method == 'PATCH':
-        # To edit existng student
+        try:
+            student = Student.objects.get(pk=roll_no)
+        except Exception as e:
+            error = {'error': str(e)}
+            return error
         pass
 
 # Get Student's Total Attendance
 def cal_total_attendance_percentage(req):
     if req.method == 'GET':
         try:
-            no_of_students = Student.objects.count()
+            students = Student.objects.all()
             lecs = Lec_Stat.objects.all().count()
-            for roll_no in range(1, no_of_students+1):
-                student_total_attendance_percentage(roll_no, lecs)
+            for student in students:
+                student_total_attendance_percentage(student, lecs)
             return {'message': 'Student Attendance Percentages calculated'}
         except Exception as e:
             return {'error': str(e)}
 
-def student_total_attendance_percentage(student_roll_no, lecs):
-    s = Student.objects.get(pk=student_roll_no)
+def student_total_attendance_percentage(student, lecs):
     # Getting all attendances where student is present
-    a = Attendance.objects.filter(student=s, student_status=True).count()
-    percentage = (a/lecs) * 100
-    s.total_attendance_percentage = percentage
-    s.save()
-    res = {
-        'lecs present': a,
-        'lecs absent': lecs-a,
-        'percentage attendance': percentage
-    }
-    # except Exception as e: 
-    #     error = {'error': str(e)}
-    #     return error 
+    a = Attendance.objects.filter(student=student, student_status=True).count()
+    student.total_attendance_percentage = (a/lecs) * 100 if lecs!=0 else 0
+    student.save()
 
 # Get Student's Course Attendance
 def student_course_attendance_percentage(student_roll_no, course_id):
