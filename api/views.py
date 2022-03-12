@@ -10,8 +10,11 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.serializers import AttendanceSerializer, CourseSerializer, CourseViewSerializer, StatSerializer, StudentSerializer, TeacherSerializer, TeacherViewSerializer
-from .models import Attendance, Course, Lec_Stat, Student, Teacher
-from .jwtUtil import signJWT, decodeJWT
+from api.models import Attendance, Course, Lec_Stat, Student, Teacher
+from api.jwtUtil import signJWT, decodeJWT
+
+from api.controllers import attendance_controller as ac
+from api.controllers import course_controllers as cc
 
 # Create your views here.
 
@@ -156,105 +159,19 @@ def course(request, course_id):
             error = {'error': str(e)}
             return Response(error)
 
+
 # View and Mark attendance for a course lec by id
 @api_view(['GET', 'POST', 'PATCH'])
 def attendance(request, courseId, lec_no):
-    if request.method == 'GET':
-        try:
-            no_of_students = Student.objects.count()
-            course = Course.objects.get(pk=courseId)
-            attendance = Attendance.objects.all().filter(course=courseId, lec_no=lec_no)
-            lec = Lec_Stat.objects.get(course=courseId, lec_no=lec_no)
-            statSerializer = StatSerializer(lec)
-            statcpy = statSerializer.data
-            statcpy['class_strength'] = no_of_students
-            attenSerialzer = AttendanceSerializer(attendance, many=True)
-            res = {
-                'stat': statcpy,
-                'attendance': attenSerialzer.data
-            }
-            return Response(res)
-        except Exception as e:
-            error = {'error': str(e)}
-            return Response(error)
+    res = ac.attendance(request, courseId, lec_no)
+    return Response(res)
 
-    elif request.method == 'POST':
-        students = request.data
-        no_of_students = Student.objects.count()
-        students_present = no_of_students
-        absent_roll_nos = []
-        for student in students:
-            roll_no = student['student']
-            absent_roll_nos.append(roll_no)        
-        try:
-            course = Course.objects.get(pk=courseId)
-            for roll_no in range(1, no_of_students+1):
-                s = Student.objects.get(pk=roll_no)
-                attendance = Attendance(lec_no=lec_no, student=s, course=course)
-                if roll_no in absent_roll_nos:
-                    attendance.student_status=False
-                    students_present-=1
-                attendance.save()
-        except Exception as e:
-            error = {'error': str(e)}
-            return Response(error)
-        percentage = (students_present/no_of_students) * 100
-        stat = Lec_Stat(course=course, lec_no=lec_no, students_present=students_present, attendance_percentage=percentage)
-        stat.save()
-        statSerializer = StatSerializer(stat)
-        statcpy = statSerializer.data
-        statcpy['class_strength'] = no_of_students
-        return Response(statcpy)
-    elif request.method == 'PATCH':
-        students = request.data
-        course = Course.objects.get(pk=courseId)
-        stat = Lec_Stat.objects.filter(course=course, lec_no=lec_no)
-        students_present = stat.students_present
-        for student in students:
-            student_id = student['student']
-            s = Student.objects.get(pk=student_id)
-            attendance = Attendance.objects.filter(lec_no=lec_no, student=s, course=course)
-            if student['student_status'] != s.student_status: # Check if incoming status is different
-                if student['student_status'] == True: # Incoming change is true ie student present then increment
-                    students_present+=1 
-                else: # Else incoming change is false ie student absent then decrement
-                    students_present-=1
-                s.student_status = student['student_status']
-        no_of_students = Student.objects.count()
-        percentage = (students_present/no_of_students) * 100
-        stat.students_present = students_present
-        stat.attendance_percentage = percentage
-        stat.save()
-        statSerializer = StatSerializer(stat)
-        statcpy = statSerializer.data
-        statcpy['class_strength'] = no_of_students
-        return Response(statcpy)
 
 # Get avg Course Attendance Percentage and stats
 @api_view(['GET'])
-def course_attendance_percentage(request, course_id):
-    if request.method == 'GET':
-        try:
-            c = Course.objects.get(pk=course_id)
-            lecs = Lec_Stat.objects.filter(course=c)
-            lecCount = lecs.count()
-            if lecCount!=0:
-                atten_sum = Lec_Stat.objects.all().aggregate(sum=Sum('attendance_percentage'))
-                avg_percentage_attendace = atten_sum['sum']/lecCount
-                statSerializer = StatSerializer(lecs, many=True)
-                statcpy = statSerializer.data
-                for stat in statcpy:
-                    stat.pop('course')
-                res = {
-                    'course_stats': statcpy,
-                    'avg_course_attendance': avg_percentage_attendace
-                }
-                return Response(res)
-            else:
-                return Response({'error': 'No lectures found'})
-        except Exception as e:
-            error = {'error': str(e)}
-            return Response(error)
+def course_lec_stats(request, course_id):
+    res = cc.course_lec_stats(request, course_id)
+    return Response(res)
 
 
 # Get Student's Total Attendance
