@@ -1,6 +1,8 @@
 from api.serializers import AttendanceSerializer, StatSerializer
 from api.models import Attendance, Course, Lec_Stat, Student
 
+
+# View and Mark attendance for a course lec by id
 def attendance(request, courseId, lec_no):
     if request.method == 'GET':
         try:

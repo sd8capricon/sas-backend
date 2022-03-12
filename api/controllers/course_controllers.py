@@ -3,18 +3,24 @@ from django.db.models import Sum
 from api.serializers import CourseSerializer, CourseViewSerializer, StatSerializer
 from api.models import Course, Lec_Stat, Student, Teacher
 
+
+# View all courses
 def courses_detail(request):
     if request.method == 'GET':
         courses = Course.objects.all()
         serializer = CourseSerializer(courses, many=True)
         return serializer.data
 
+# View a course or Create a Course
 def course(request, course_id):
     if request.method == 'GET':
         try:
             course = Course.objects.get(pk=course_id)
             serialzer = CourseViewSerializer(course)
-            return serialzer.data
+            course = serialzer.data
+            for student in course['enrolled_students']:
+                student.pop('total_attendance_percentage')
+            return course
         except Exception as e:
             error = {'error': str(e)}
             return error
@@ -52,6 +58,7 @@ def course(request, course_id):
             error = {'error': str(e)}
             return error
 
+# Get avg Course Attendance Percentage and stats
 def course_lec_stats(request, course_id):
     if request.method == 'GET':
         try:

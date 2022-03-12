@@ -4,6 +4,8 @@ import hashlib
 from api.models import Teacher
 from api.jwtUtil import signJWT, decodeJWT
 
+
+# Login Route
 def login(request):
     if request.method == 'POST':
         data = request.data
@@ -20,6 +22,7 @@ def login(request):
             error = {'error': str(e)}
             return error
 
+# To verify token
 def verifyToken(request):
     if request.method == 'POST':
         decode = decodeJWT(request)

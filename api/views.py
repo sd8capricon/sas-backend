@@ -18,13 +18,13 @@ from api.controllers import auth_controllers, attendance_controller, course_cont
 @api_view(['POST'])
 def login(request):
     res = auth_controllers.login(request)
-    return res
+    return Response(res)
 
 # To verify token
 @api_view(['POST'])
 def verifyToken(request):
     res = auth_controllers.verifyToken(request)
-    return res
+    return Response(res)
 
 # View all students
 @api_view(['GET'])
@@ -93,13 +93,13 @@ def teacher(request, teacher_id):
 @api_view(['GET', 'POST'])
 def courses_detail(request):
     res = course_controllers.courses_detail(request)
-    return res
+    return Response(res)
 
 # View a course or Create a Course
 @api_view(['GET', 'POST', 'PATCH', 'DELETE'])
 def course(request, course_id):
     res = course_controllers.course(request, course_id)
-    return res
+    return Response(res)
 
 
 # View and Mark attendance for a course lec by id
