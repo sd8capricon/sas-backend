@@ -37,7 +37,6 @@ class Course(models.Model):
 
 
 class Attendance(models.Model):
-    date = models.DateTimeField(auto_now=True)
     student_status = models.BooleanField(null=True, default=True)
     lec_no = models.IntegerField()
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -48,9 +47,10 @@ class Attendance(models.Model):
 
 class Lec_Stat(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now=True)
     lec_no = models.IntegerField()
     students_present = models.IntegerField()
     attendance_percentage = models.FloatField(null=True)
 
     def __str__(self):
-        return str(self.course_id) + str(self.lec_no) + str(self.students_present)
+        return str(self.course) + str(self.lec_no) + str(self.students_present)

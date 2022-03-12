@@ -21,29 +21,29 @@ class TeacherViewSerializer(serializers.ModelSerializer):
 
 class CourseViewSerializer(serializers.ModelSerializer):
     enrolled_students = StudentSerializer(many=True)
-    taught_by = TeacherSerializer()
+    taught_by = TeacherViewSerializer()
     class Meta:
         model = Course
         fields = ('course_id', 'course_name', 'taught_by', 'enrolled_students')
 
 class CourseSerializer(serializers.ModelSerializer):
-    taught_by = TeacherSerializer()
+    taught_by = TeacherViewSerializer()
 
     class Meta:
         model = Course
         fields = ('course_id', 'course_name', 'taught_by')
 
 class AttendanceSerializer(serializers.ModelSerializer):
-    course = CourseSerializer()
+    # course = CourseSerializer()
     student = StudentSerializer()
 
     class Meta:
         model = Attendance
-        fields = ('date', 'lec_no', 'student_status', 'student', 'course')
+        fields = ('lec_no', 'student_status', 'student')
 
 class StatSerializer(serializers.ModelSerializer):
     course = CourseSerializer()
 
     class Meta:
         model = Lec_Stat
-        fields = '__all__'
+        fields = ('course', 'date', 'lec_no', 'students_present', 'attendance_percentage')
