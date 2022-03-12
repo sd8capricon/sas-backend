@@ -1,5 +1,4 @@
-import os
-import hashlib
+import os, hashlib
 
 from api.models import Teacher
 from api.jwtUtil import signJWT, decodeJWT

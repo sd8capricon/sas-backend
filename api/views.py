@@ -1,7 +1,3 @@
-import hashlib
-import os
-
-from django.http import HttpResponse
 from django.core.mail import send_mail
 
 from rest_framework.decorators import api_view
@@ -10,7 +6,7 @@ from rest_framework.response import Response
 from api.serializers import AttendanceSerializer, CourseSerializer, CourseViewSerializer, StatSerializer, StudentSerializer, TeacherSerializer, TeacherViewSerializer
 from api.models import Attendance, Course, Lec_Stat, Student, Teacher
 
-from api.controllers import auth_controllers, attendance_controller, course_controllers
+from api.controllers import auth_controllers, attendance_controller, course_controllers, student_controller, teacher_controller
 
 # Create your views here.
 
@@ -29,65 +25,25 @@ def verifyToken(request):
 # View all students
 @api_view(['GET'])
 def students_details(request):
-    if request.method == 'GET':
-        student = Student.objects.all()
-        serializer = StudentSerializer(student, many=True)
-        return Response(serializer.data)
+    res = student_controller.students_details(request)
+    return Response(res)
 
 # View a student and Register a student
 @api_view(['GET', 'POST', 'PATCH', 'DELETE'])
 def student(request, roll_no):
-    if request.method == 'GET':
-        try:
-            student = Student.objects.get(pk = roll_no)
-            serializer = StudentSerializer(student)
-            return Response(serializer.data)
-        except Exception as e:
-            error = {'error': str(e)}
-            return Response(error)
-    elif request.method == 'POST':
-        try:
-            student = StudentSerializer(data=request.data)
-            if student.is_valid():
-                student.save()
-            return Response(student.data)
-        except Exception as e:
-            error = {'error': str(e)}
-            return Response(error)
-    elif request.method == 'PATCH':
-        # To edit existng student
-        pass
+    res = student_controller.student(request, roll_no)
+    return Response(res)
 
 # View all Teachers
 @api_view(['GET'])
 def teachers_details(request):
-    if request.method == 'GET':
-        teacher = Teacher.objects.all()
-        serializer = TeacherViewSerializer(teacher, many=True)
-        return Response(serializer.data)
+    res = teacher_controller.teachers_details(request)
+    return Response(res)
 
 @api_view(['GET', 'POST', 'PATCH', 'DELETE'])
 def teacher(request, teacher_id):
-    if request.method == 'GET':
-        try:
-            teacher = Teacher.objects.get(pk=teacher_id)
-            serializer = TeacherViewSerializer(teacher)
-            return Response(serializer.data)
-        except Exception as e:
-            error = {'error': str(e)}
-            return Response(error)
-    elif request.method == 'POST':
-        try:
-            data = request.data
-            password = (os.environ.get('PASS_SALT')+data['password']).encode('utf-8')
-            h = hashlib.sha256(password).hexdigest()
-            t = Teacher(username=data['username'], password=h, f_name=data['f_name'], l_name=data['l_name'])
-            t.save()
-            serializer = TeacherViewSerializer(t)
-            return Response(serializer.data)
-        except Exception as e:
-            error = {'error': str(e)}
-            return Response(error)
+    res = teacher_controller.teacher(request, teacher_id)
+    return Response(res)
 
 # View all courses
 @api_view(['GET', 'POST'])
