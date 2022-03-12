@@ -3,8 +3,8 @@ from api.models import Attendance, Course, Lec_Stat, Student
 
 
 # View and Mark attendance for a course lec by id
-def attendance(request, courseId, lec_no):
-    if request.method == 'GET':
+def attendance(req, courseId, lec_no):
+    if req.method == 'GET':
         try:
             no_of_students = Student.objects.count()
             course = Course.objects.get(pk=courseId)
@@ -22,8 +22,8 @@ def attendance(request, courseId, lec_no):
         except Exception as e:
             error = {'error': str(e)}
             return error
-    elif request.method == 'POST':
-        students = request.data
+    elif req.method == 'POST':
+        students = req.data
         no_of_students = Student.objects.count()
         students_present = no_of_students
         absent_roll_nos = []
@@ -49,8 +49,8 @@ def attendance(request, courseId, lec_no):
         statcpy = statSerializer.data
         statcpy['class_strength'] = no_of_students
         return statcpy
-    elif request.method == 'PATCH':
-        students = request.data
+    elif req.method == 'PATCH':
+        students = req.data
         course = Course.objects.get(pk=courseId)
         stat = Lec_Stat.objects.filter(course=course, lec_no=lec_no)
         students_present = stat.students_present

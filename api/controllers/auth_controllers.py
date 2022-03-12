@@ -5,9 +5,9 @@ from api.jwtUtil import signJWT, decodeJWT
 
 
 # Login Route
-def login(request):
-    if request.method == 'POST':
-        data = request.data
+def login(req):
+    if req.method == 'POST':
+        data = req.data
         try:
             teacher = Teacher.objects.get(username = data['username'])
             password = (os.environ.get('PASS_SALT')+data['password']).encode('utf-8')
@@ -22,7 +22,7 @@ def login(request):
             return error
 
 # To verify token
-def verifyToken(request):
-    if request.method == 'POST':
-        decode = decodeJWT(request)
+def verifyToken(req):
+    if req.method == 'POST':
+        decode = decodeJWT(req)
         return decode
