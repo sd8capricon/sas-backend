@@ -11,6 +11,7 @@ def signJWT(teacher_id):
     }
     token = jwt.encode(payload, secret, algorithm='HS256')
     return {
+        'isValid': True,
         'token':token
     }
 

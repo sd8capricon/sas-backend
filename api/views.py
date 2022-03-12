@@ -1,3 +1,5 @@
+import hashlib
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.db.models import Sum
@@ -19,8 +21,9 @@ def login(request):
         data = request.data
         try:
             teacher = Teacher.objects.get(username = data['username'])
-            # Add logic for hashing
-            if (teacher.password == data['password']):
+            password = data['password'].encode('utf-8')
+            h = hashlib.sha256(password).hexdigest()
+            if (teacher.password == h):
                 token = signJWT(teacher.teacher_id)
                 return Response(token)
             else:
@@ -89,7 +92,9 @@ def teacher(request, teacher_id):
     elif request.method == 'POST':
         try:
             data = request.data
-            t = Teacher(username=data['username'], password=data['password'], f_name=data['f_name'], l_name=data['l_name'])
+            password = data['password'].encode('utf-8')
+            h = hashlib.sha256(password).hexdigest()
+            t = Teacher(username=data['username'], password=h, f_name=data['f_name'], l_name=data['l_name'])
             t.save()
             serializer = TeacherViewSerializer(t)
             return Response(serializer.data)

@@ -17,7 +17,7 @@ class Student(models.Model):
 class Teacher(models.Model):
     teacher_id = models.BigAutoField(primary_key=True)
     username = models.CharField(max_length=20, unique=True)
-    password = models.CharField(max_length=50)
+    password = models.CharField(max_length=64)
     f_name = models.CharField(max_length=20)
     l_name = models.CharField(max_length=20)
 
@@ -50,7 +50,7 @@ class Lec_Stat(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     lec_no = models.IntegerField()
     students_present = models.IntegerField()
-    attendance_percentage = models.FloatField()
+    attendance_percentage = models.FloatField(null=True)
 
     def __str__(self):
         return str(self.course_id) + str(self.lec_no) + str(self.students_present)
