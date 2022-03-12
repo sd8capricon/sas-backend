@@ -32,3 +32,23 @@ def teacher(req, teacher_id):
         except Exception as e:
             error = {'error': str(e)}
             return error
+    elif req.method == 'PATCH':
+        try:
+            data = req.data
+            password = (os.environ.get('PASS_SALT')+data['password']).encode('utf-8')
+            h = hashlib.sha256(password).hexdigest()
+            Teacher.objects.filter(teacher_id=teacher_id).update(username=data['username'], password=h, f_name=data['f_name'], l_name=data['l_name'])
+            t = Teacher.objects.get(pk=teacher_id)
+            serializer = TeacherViewSerializer(t)
+            return serializer.data
+        except Exception as e:
+            error = {'error': str(e)}
+            return error
+    elif req.method == 'DELETE':
+        try:
+            t = Teacher.objects.get(pk=teacher_id)
+            t.delete()
+            return {"message": "Teacher Removed"}
+        except Exception as e:
+            error = {'error': str(e)}
+            return error

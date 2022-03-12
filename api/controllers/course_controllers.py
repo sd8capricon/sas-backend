@@ -47,8 +47,24 @@ def course(req, course_id):
             error = {'error': str(e)}
             return error
     elif req.method == 'PATCH':
-        # To edit a existing course
-        pass
+        data = req.data
+        taught_by_id = data['taught_by']
+        taught_by = Teacher.objects.get(pk=taught_by_id)
+        Course.objects.filter(course_id=course_id).update(course_name=data['course_name'], taught_by=taught_by)
+        c = Course.objects.get(pk=course_id)
+        if 'unenroll_students' in data:
+                unenroll_students = data['unenroll_students']
+                for student in unenroll_students:
+                    s = Student.objects.get(pk=student)
+                    c.enrolled_students.remove(s)
+        if 'enrolled_students' in data:
+                enrolled_students = data['enrolled_students']
+                for student in enrolled_students:
+                    s = Student.objects.get(pk=student)
+                    c.enrolled_students.add(s)
+        c.save()
+        serializer = CourseViewSerializer(c)
+        return serializer.data
     elif req.method == 'DELETE':
         try:
             course = Course.objects.get(pk=course_id)

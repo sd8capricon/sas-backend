@@ -35,6 +35,14 @@ def student(req, roll_no):
             error = {'error': str(e)}
             return error
         pass
+    elif req.method == 'DELETE':
+        try:
+            s = Student.objects.get(pk=roll_no)
+            s.delete()
+            return {"message": "Student Removed"}
+        except Exception as e:
+            error = {'error': str(e)}
+            return error
 
 # Get Student's Total Attendance
 def cal_total_attendance_percentage(req):
