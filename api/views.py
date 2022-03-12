@@ -1,10 +1,7 @@
-from django.core.mail import send_mail
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.models import Student
-
+from api.emailUtil import email_defaultors
 from api.controllers import auth_controllers, attendance_controller, course_controllers, student_controller, teacher_controller
 
 # Create your views here.
@@ -78,15 +75,5 @@ def attendance(req, courseId, lec_no):
 # Email to defaultors
 @api_view(['POST'])
 def email_defaultors(req):
-    if req.method == 'POST':
-        defaultors = Student.objects.filter(total_attendance_percentage__lt=70)
-        for defaultor in req.data['defaultors']:
-            d = Student.objects.get(pk=defaultor)
-            defaultors.append(d.email)
-        send_mail(
-            'Defaultor',
-            'You are recieving this mail for being a defaultor',
-            'from@example.com',
-            defaultors,
-            fail_silently=False,
-        )
+    res = email_defaultors()
+    return Response(res)
