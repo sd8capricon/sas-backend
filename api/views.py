@@ -1,3 +1,5 @@
+import json
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -69,8 +71,16 @@ def course_lec_stats(req, course_id):
 @api_view(['GET', 'POST', 'PATCH'])
 def attendance(req, courseId, lec_no):
     res = attendance_controller.attendance(req, courseId, lec_no)
+    if 'error' in res:
+        return Response(res, status=400)
     return Response(res)
 
+@api_view(['GET'])
+def get_last_lecnum(req, course_id):
+    res = attendance_controller.get_last_lecnum(req, course_id)
+    if 'error' in res:
+        return Response(res, status=400)
+    return Response(res)
 
 # Email to defaultors
 @api_view(['POST'])

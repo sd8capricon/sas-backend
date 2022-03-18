@@ -1,3 +1,5 @@
+from django.db.models import Max
+
 from api.serializers import AttendanceSerializer, StatSerializer
 from api.models import Attendance, Course, Lec_Stat, Student
 
@@ -73,3 +75,15 @@ def attendance(req, courseId, lec_no):
         statcpy = statSerializer.data
         statcpy['class_strength'] = no_of_students
         return statcpy
+
+def get_last_lecnum(req, course_id):
+    if req.method == 'GET':
+        try:
+            lecs = Lec_Stat.objects.filter(course=course_id).aggregate(max=Max('lec_no'))
+            lec_no = lecs['max']
+            return {
+                'last_lec': lec_no
+            }
+        except Exception as e:
+            error = {'error': str(e)}
+            return error

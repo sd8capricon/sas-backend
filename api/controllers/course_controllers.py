@@ -80,21 +80,24 @@ def course_lec_stats(req, course_id):
         try:
             c = Course.objects.get(pk=course_id)
             lecs = Lec_Stat.objects.filter(course=c)
+            num_lecs = lecs.values_list('lec_no').distinct().count()
             lecCount = lecs.count()
             if lecCount!=0:
-                atten_sum = Lec_Stat.objects.all().aggregate(sum=Sum('attendance_percentage'))
+                atten_sum = Lec_Stat.objects.filter(course=c).aggregate(sum=Sum('attendance_percentage'))
                 avg_percentage_attendace = atten_sum['sum']/lecCount
                 statSerializer = StatSerializer(lecs, many=True)
                 statcpy = statSerializer.data
                 for stat in statcpy:
                     stat.pop('course')
                 res = {
-                    'course_stats': statcpy,
+                    'num_lecs': num_lecs,
+                    'lec_stats': statcpy,
                     'avg_course_attendance': avg_percentage_attendace
                 }
                 return res
             else:
                 return {'error': 'No lectures found'}
         except Exception as e:
+            print(e)
             error = {'error': str(e)}
             return error
