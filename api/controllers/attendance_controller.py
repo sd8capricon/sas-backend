@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from django.db.models import Max
 
 from api.serializers import AttendanceSerializer, StatSerializer
@@ -81,6 +82,10 @@ def get_last_lecnum(req, course_id):
         try:
             lecs = Lec_Stat.objects.filter(course=course_id).aggregate(max=Max('lec_no'))
             lec_no = lecs['max']
+            print(lec_no)
+            if lec_no == None:
+                error = {'error': "No Lectures found or Course does not exists"}
+                return error
             return {
                 'last_lec': lec_no
             }
