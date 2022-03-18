@@ -1,4 +1,3 @@
-from asyncio.windows_events import NULL
 from django.db.models import Max
 
 from api.serializers import AttendanceSerializer, StatSerializer
