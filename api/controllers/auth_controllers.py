@@ -2,6 +2,7 @@ import os, hashlib
 
 from api.models import Teacher
 from api.jwtUtil import signJWT, decodeJWT
+from api.serializers import TeacherViewSerializer
 
 
 # Login Route
@@ -19,6 +20,7 @@ def login(req):
             h = hashlib.sha256(password).hexdigest()
             if (teacher.password == h):
                 token = signJWT(teacher.teacher_id)
+                token['teacher'] = TeacherViewSerializer(teacher).data
                 token['course_taught'] = course_taught_id
                 return token
             else:
