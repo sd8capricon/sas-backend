@@ -83,8 +83,7 @@ def get_last_lecnum(req, course_id):
             lec_no = lecs['max']
             print(lec_no)
             if lec_no == None:
-                error = {'error': "No Lectures found or Course does not exists"}
-                return error
+                lec_no = 0
             return {
                 'last_lec': lec_no
             }
