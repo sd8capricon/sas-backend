@@ -1,7 +1,7 @@
 import os, hashlib
 
 from api.models import Teacher
-from api.jwtUtil import signJWT, decodeJWT
+from api.utils.jwtUtil import signJWT, decodeJWT
 from api.serializers import TeacherViewSerializer
 
 
