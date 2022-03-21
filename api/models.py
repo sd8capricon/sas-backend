@@ -20,6 +20,7 @@ class Teacher(models.Model):
     password = models.CharField(max_length=64)
     f_name = models.CharField(max_length=20)
     l_name = models.CharField(max_length=20)
+    type = models.CharField(max_length=10, default='user')
 
     def __str__(self):
         return str(self.teacher_id) + " " + self.f_name

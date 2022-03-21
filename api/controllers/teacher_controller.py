@@ -26,6 +26,8 @@ def teacher(req, teacher_id):
             password = (os.environ.get('PASS_SALT')+data['password']).encode('utf-8')
             h = hashlib.sha256(password).hexdigest()
             t = Teacher(username=data['username'], password=h, f_name=data['f_name'], l_name=data['l_name'])
+            if 'type' in data:
+                t.type = data['type']
             t.save()
             serializer = TeacherViewSerializer(t)
             return serializer.data

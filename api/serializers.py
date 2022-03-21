@@ -12,12 +12,12 @@ class StudentSerializer(serializers.ModelSerializer):
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
-        fields = ('teacher_id', 'f_name', 'l_name', 'username', 'password')
+        fields = ('teacher_id', 'f_name', 'l_name', 'username', 'password', 'type')
 
 class TeacherViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
-        fields = ('teacher_id', 'f_name', 'l_name', 'username')
+        fields = ('teacher_id', 'f_name', 'l_name', 'username', 'type')
 
 class CourseViewSerializer(serializers.ModelSerializer):
     enrolled_students = StudentSerializer(many=True)
