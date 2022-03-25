@@ -59,7 +59,7 @@ def cal_total_attendance_percentage(req):
 def student_total_attendance_percentage(student, lecs):
     # Getting all attendances where student is present
     a = Attendance.objects.filter(student=student, student_status=True).count()
-    student.total_attendance_percentage = (a/lecs) * 100 if lecs!=0 else 0
+    student.total_attendance_percentage = "{:.2f}".format((a/lecs) * 100) if lecs!=0 else 0
     student.save()
 
 # Get Student's Course Attendance
