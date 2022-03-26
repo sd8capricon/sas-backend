@@ -1,4 +1,3 @@
-from re import search
 from django.db import IntegrityError
 from api.serializers import StudentSerializer
 from api.models import Attendance, Course, Lec_Stat, Student
@@ -8,7 +7,8 @@ def students_details(req):
     if req.method == 'GET':
         student = Student.objects.all()
         serializer = StudentSerializer(student, many=True)
-        return serializer.data
+        sortedStudents = sorted(serializer.data, key = lambda d:d['roll_no'])
+        return sortedStudents
 
 # View a student and Register a student
 def student(req, roll_no):
