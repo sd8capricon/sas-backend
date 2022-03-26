@@ -32,6 +32,8 @@ def students_details(req):
 @api_view(['GET', 'POST', 'PATCH', 'DELETE'])
 def student(req, roll_no):
     res = student_controller.student(req, roll_no)
+    if 'error' in res:
+        return Response(res, status=400)
     return Response(res)
 
 # Cal student total attendance percentage
@@ -44,17 +46,23 @@ def cal_total_attendance_percentage(req):
 @api_view(['GET'])
 def teachers_details(req):
     res = teacher_controller.teachers_details(req)
+    if 'error' in res:
+        return Response(res, status=400)
     return Response(res)
 
 @api_view(['GET', 'POST', 'PATCH', 'DELETE'])
 def teacher(req, teacher_id):
     res = teacher_controller.teacher(req, teacher_id)
+    if 'error' in res:
+        return Response(res, status=400)
     return Response(res)
 
 # View all courses
 @api_view(['GET', 'POST'])
 def courses_detail(req):
     res = course_controllers.courses_detail(req)
+    if 'error' in res:
+        return Response(res, status=400)
     return Response(res)
 
 # View a course or Create a Course
