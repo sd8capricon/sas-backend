@@ -1,3 +1,5 @@
+from re import search
+from django.db import IntegrityError
 from api.serializers import StudentSerializer
 from api.models import Attendance, Course, Lec_Stat, Student
 
@@ -21,16 +23,35 @@ def student(req, roll_no):
     elif req.method == 'POST':
         try:
             data = req.data
+            s = Student.objects.filter(pk=data['roll_no']).count()
+            if s>0:
+                return {'error': 'Roll Number already assigned'}
             student = Student(roll_no=data['roll_no'], f_name=data['f_name'], l_name=data['l_name'], email=data['email'])
             student.save()
             serializer = StudentSerializer(student)
             return serializer.data
+        except IntegrityError as e:
+            error = {'error': 'Email is already in use'}
+            return error
         except Exception as e:
             error = {'error': str(e)}
             return error
     elif req.method == 'PATCH':
         try:
+            data = req.data
             student = Student.objects.get(pk=roll_no)
+            student.f_name = data['f_name']
+            student.l_name = data['l_name']
+            student.email = data['email']
+            student.save()
+            lecs = Lec_Stat.objects.all().count()
+            cal_total_attendance_percentage
+            student_total_attendance_percentage(student, lecs)
+            serializer = StudentSerializer(student)
+            return serializer.data
+        except IntegrityError as e:
+            error = {'error': 'Email is already in use'}
+            return error
         except Exception as e:
             error = {'error': str(e)}
             return error
