@@ -24,6 +24,8 @@ def verifyToken(req):
 @api_view(['GET'])
 def students_details(req):
     res = student_controller.students_details(req)
+    if 'error' in res:
+        return Response(res, status=400)
     return Response(res)
 
 # View a student and Register a student
