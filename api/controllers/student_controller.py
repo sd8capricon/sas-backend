@@ -67,12 +67,15 @@ def student(req, roll_no):
 def cal_total_attendance_percentage(req):
     if req.method == 'GET':
         try:
-            students = Student.objects.all()
-            for student in students:
-                student_total_attendance_percentage(student)
+            all_total_attendance_percentage()
             return {'message': 'Student Attendance Percentages calculated'}
         except Exception as e:
             return {'error': str(e)}
+
+def all_total_attendance_percentage():
+    students = Student.objects.all()
+    for student in students:
+        student_total_attendance_percentage(student)
 
 def student_total_attendance_percentage(student):
     # Getting all attendances where student is present
