@@ -37,7 +37,7 @@ def attendance(req, courseId, lec_no):
                 absent_roll_nos.append(roll_no)        
             try:
                 course = Course.objects.get(pk=courseId)
-                for roll_no in range(1, no_of_students+1):
+                for roll_no in range(1, no_of_students):
                     s = Student.objects.get(pk=roll_no)
                     attendance = Attendance(lec_no=lec_no, student=s, course=course)
                     if roll_no in absent_roll_nos:
