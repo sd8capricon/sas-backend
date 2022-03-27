@@ -44,9 +44,7 @@ def student(req, roll_no):
             student.l_name = data['l_name']
             student.email = data['email']
             student.save()
-            lecs = Lec_Stat.objects.all().count()
-            cal_total_attendance_percentage
-            student_total_attendance_percentage(student, lecs)
+            student_total_attendance_percentage(student)
             serializer = StudentSerializer(student)
             return serializer.data
         except IntegrityError as e:
@@ -70,15 +68,15 @@ def cal_total_attendance_percentage(req):
     if req.method == 'GET':
         try:
             students = Student.objects.all()
-            lecs = Lec_Stat.objects.all().count()
             for student in students:
-                student_total_attendance_percentage(student, lecs)
+                student_total_attendance_percentage(student)
             return {'message': 'Student Attendance Percentages calculated'}
         except Exception as e:
             return {'error': str(e)}
 
-def student_total_attendance_percentage(student, lecs):
+def student_total_attendance_percentage(student):
     # Getting all attendances where student is present
+    lecs = Lec_Stat.objects.all().count()
     a = Attendance.objects.filter(student=student, student_status=True).count()
     student.total_attendance_percentage = "{:.2f}".format((a/lecs) * 100) if lecs!=0 else 0
     student.save()

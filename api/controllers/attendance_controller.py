@@ -1,4 +1,5 @@
 from django.db.models import Max
+from api.controllers.student_controller import student_total_attendance_percentage
 
 from api.serializers import AttendanceSerializer, StatSerializer
 from api.models import Attendance, Course, Lec_Stat, Student
@@ -26,10 +27,10 @@ def attendance(req, courseId, lec_no):
             return error
     elif req.method == 'POST':
         students = req.data
-        no_of_students = Student.objects.count()
-        students_present = no_of_students
         absent_roll_nos = []
         course = Course.objects.get(pk=courseId)
+        enrolled_students = course.enrolled_students.all().values_list('roll_no', flat=True)
+        students_present = len(enrolled_students)
         lec = Lec_Stat.objects.filter(course=course, lec_no=lec_no)
         if lec.count() == 0:
             for student in students:
@@ -37,22 +38,23 @@ def attendance(req, courseId, lec_no):
                 absent_roll_nos.append(roll_no)        
             try:
                 course = Course.objects.get(pk=courseId)
-                for roll_no in range(1, no_of_students):
+                for roll_no in enrolled_students:
                     s = Student.objects.get(pk=roll_no)
                     attendance = Attendance(lec_no=lec_no, student=s, course=course)
                     if roll_no in absent_roll_nos:
                         attendance.student_status=False
                         students_present-=1
                     attendance.save()
+                    student_total_attendance_percentage(s)
             except Exception as e:
                 error = {'error': str(e)}
                 return error
-            percentage = (students_present/no_of_students) * 100
+            percentage = (students_present/len(enrolled_students)) * 100
             stat = Lec_Stat(course=course, lec_no=lec_no, students_present=students_present, attendance_percentage=percentage)
             stat.save()
             statSerializer = StatSerializer(stat)
             statcpy = statSerializer.data
-            statcpy['class_strength'] = no_of_students
+            statcpy['class_strength'] = len(enrolled_students)
             return statcpy
         else:
             error = {'error': 'Lecture Already Marked'}
@@ -75,7 +77,8 @@ def attendance(req, courseId, lec_no):
                     students_present-=1
                 attendance.student_status = student['student_status']
                 attendance.save()
-        no_of_students = Student.objects.count()
+                student_total_attendance_percentage(s)
+        no_of_students = len(course.enrolled_students.all().values_list('roll_no', flat=True))
         percentage = (students_present/no_of_students) * 100
         stat.students_present = students_present
         stat.attendance_percentage = percentage
