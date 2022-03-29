@@ -16,7 +16,9 @@ def teacher(req, teacher_id):
         try:
             teacher = Teacher.objects.get(pk=teacher_id)
             serializer = TeacherViewSerializer(teacher)
-            return serializer.data
+            scpy = serializer.data
+            scpy['course_taught'] = teacher.course.course_name
+            return scpy
         except Exception as e:
             error = {'error': str(e)}
             return error

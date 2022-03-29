@@ -21,6 +21,7 @@ def login(req):
             if (teacher.password == h):
                 token = signJWT(teacher.teacher_id)
                 token['teacher'] = TeacherViewSerializer(teacher).data
+                token['teacher']['course_taught'] = teacher.course.course_name
                 token['course_taught'] = course_taught_id
                 return token
             else:
