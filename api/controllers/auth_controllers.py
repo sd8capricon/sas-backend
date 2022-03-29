@@ -11,18 +11,20 @@ def login(req):
         data = req.data
         try:
             teacher = Teacher.objects.get(username = data['username'])
-            try:
-                course_taught_id = teacher.course.course_id
-            except Teacher.course.RelatedObjectDoesNotExist as e:
-                course_taught_id = None
-            print(course_taught_id)
+            print(data['password'])
             password = (os.environ.get('PASS_SALT')+data['password']).encode('utf-8')
             h = hashlib.sha256(password).hexdigest()
+            print(h)
+            print(teacher.password)
             if (teacher.password == h):
                 token = signJWT(teacher.teacher_id)
                 token['teacher'] = TeacherViewSerializer(teacher).data
-                token['teacher']['course_name'] = teacher.course.course_name
-                token['teacher']['course_taught'] = course_taught_id
+                try:
+                    token['teacher']['course_name'] = teacher.course.course_name
+                    token['teacher']['course_taught'] = teacher.course.course_id
+                except Teacher.course.RelatedObjectDoesNotExist as e:
+                    token['teacher']['course_taught'] = None
+                    token['teacher']['course_name'] = None
                 return token
             else:
                 return {'error': 'Incorrect Username or Password'}
