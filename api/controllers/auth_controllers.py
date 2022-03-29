@@ -21,10 +21,10 @@ def login(req):
                 token['teacher'] = TeacherViewSerializer(teacher).data
                 try:
                     token['teacher']['course_name'] = teacher.course.course_name
-                    token['teacher']['course_taught'] = teacher.course.course_id
+                    token['teacher']['course_id'] = teacher.course.course_id
                 except Teacher.course.RelatedObjectDoesNotExist as e:
-                    token['teacher']['course_taught'] = None
                     token['teacher']['course_name'] = None
+                    token['teacher']['course_id'] = None
                 return token
             else:
                 return {'error': 'Incorrect Username or Password'}
