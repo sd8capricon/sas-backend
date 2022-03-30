@@ -3,7 +3,7 @@ import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.utils.emailUtil import email_defaultors
+from api.utils.emailUtil import email_util
 from api.controllers import auth_controllers, attendance_controller, course_controllers, student_controller, teacher_controller
 
 # Create your views here.
@@ -95,5 +95,5 @@ def get_last_lecnum(req, course_id):
 # Email to defaultors
 @api_view(['POST'])
 def email_defaultors(req):
-    res = email_defaultors(req)
+    res = email_util(req)
     return Response(res)
