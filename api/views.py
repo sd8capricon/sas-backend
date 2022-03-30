@@ -95,5 +95,5 @@ def get_last_lecnum(req, course_id):
 # Email to defaultors
 @api_view(['POST'])
 def email_defaultors(req):
-    res = email_defaultors()
+    res = email_defaultors(req)
     return Response(res)
