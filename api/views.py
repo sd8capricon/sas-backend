@@ -18,6 +18,8 @@ def login(req):
 @api_view(['POST'])
 def verifyToken(req):
     res = auth_controllers.verifyToken(req)
+    if 'error' in res:
+        return Response(res, status=400)
     return Response(res)
 
 # View all students
@@ -40,6 +42,8 @@ def student(req, roll_no):
 @api_view(['GET'])
 def cal_total_attendance_percentage(req):
     res = student_controller.cal_total_attendance_percentage(req)
+    if 'error' in res:
+        return Response(res, status=400)
     return Response(res)
 
 # View all Teachers
@@ -69,12 +73,16 @@ def courses_detail(req):
 @api_view(['GET', 'POST', 'PATCH', 'DELETE'])
 def course(req, course_id):
     res = course_controllers.course(req, course_id)
+    if 'error' in res:
+        return Response(res, status=400)
     return Response(res)
 
 # Get avg Course Attendance Percentage and stats
 @api_view(['GET'])
 def course_lec_stats(req, course_id):
     res = course_controllers.course_lec_stats(req, course_id)
+    if 'error' in res:
+        return Response(res, status=400)
     return Response(res)
 
 # View and Mark attendance for a course lec by id
@@ -96,4 +104,6 @@ def get_last_lecnum(req, course_id):
 @api_view(['POST'])
 def email_defaultors(req):
     res = email_util(req)
+    if 'error' in res:
+        return Response(res, status=400)
     return Response(res)
