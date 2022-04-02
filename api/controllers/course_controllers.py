@@ -20,8 +20,8 @@ def course(req, course_id):
             course = serialzer.data
             for student in course['enrolled_students']:
                 student.pop('total_attendance_percentage')
-            course.pop('enrolled_students')
             sortedEStudents = sorted(course['enrolled_students'], key = lambda d:d['roll_no'])
+            course.pop('enrolled_students')
             course['enrolled_students'] = sortedEStudents
             return course
         except Exception as e:
