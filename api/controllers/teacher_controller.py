@@ -1,5 +1,4 @@
 import hashlib
-from operator import indexOf
 import os
 
 from api.serializers import AttendanceSerializer, StatSerializer, TeacherViewSerializer
@@ -21,7 +20,8 @@ def teachers_details(req):
         scpy = serializer.data
         for index, teacher in enumerate(scpy):
             teacher['course_taught'] = course_taught[index]
-        return scpy
+        sortedTeachers = sorted(scpy, key = lambda d:d['teacher_id'])
+        return sortedTeachers
 
 def teacher(req, teacher_id):
     if req.method == 'GET':
@@ -56,12 +56,14 @@ def teacher(req, teacher_id):
     elif req.method == 'PATCH':
         try:
             data = req.data
-            password = (os.environ.get('PASS_SALT') +
-                        data['password']).encode('utf-8')
-            h = hashlib.sha256(password).hexdigest()
-            Teacher.objects.filter(teacher_id=teacher_id).update(
-                username=data['username'], password=h, f_name=data['f_name'], l_name=data['l_name'])
+            Teacher.objects.filter(teacher_id=teacher_id).update(username=data['username'], f_name=data['f_name'], l_name=data['l_name'])
             t = Teacher.objects.get(pk=teacher_id)
+            if 'password' in data:
+                password = (os.environ.get('PASS_SALT') +
+                        data['password']).encode('utf-8')
+                h = hashlib.sha256(password).hexdigest()
+                t.password = h
+                t.save()
             serializer = TeacherViewSerializer(t)
             return serializer.data
         except Exception as e:
