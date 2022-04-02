@@ -1,8 +1,8 @@
 import hashlib
 import os
 
-from api.serializers import AttendanceSerializer, StatSerializer, TeacherViewSerializer
-from api.models import Attendance, Course, Lec_Stat, Student, Teacher
+from api.serializers import TeacherViewSerializer
+from api.models import Teacher
 
 
 # View all Teachers
