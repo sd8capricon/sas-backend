@@ -100,6 +100,14 @@ def get_last_lecnum(req, course_id):
         return Response(res, status=400)
     return Response(res)
 
+# Get Defaulters
+@api_view(['GET'])
+def getDefaulters(req):
+    res = student_controller.defaulters(req)
+    if 'error' in res:
+        return Response(res, status=400)
+    return Response(res)
+
 # Email to defaultors
 @api_view(['POST'])
 def email_defaultors(req):

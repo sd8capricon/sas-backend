@@ -72,6 +72,18 @@ def cal_total_attendance_percentage(req):
         except Exception as e:
             return {'error': str(e)}
 
+# Get defaulters
+def defaulters(req):
+    if req.method == 'GET':
+        try:
+            dList = Student.objects.filter(total_attendance_percentage__lt=70)
+            serializer = StudentSerializer(dList, many=True)
+            sortedStudents = sorted(serializer.data, key = lambda d:d['roll_no'])
+            return sortedStudents
+        except Exception as e:
+            err = {'error': e}
+            return err
+
 def all_total_attendance_percentage():
     students = Student.objects.all()
     for student in students:

@@ -14,5 +14,6 @@ urlpatterns = [
     path('course-lec-stats/<int:course_id>/', views.course_lec_stats),
     path('attendance/<int:courseId>/<int:lec_no>/', views.attendance),
     path('get-last-lec/<int:course_id>/', views.get_last_lecnum),
+    path('defaulters/', views.getDefaulters),
     path('email-defaultors/', views.email_defaultors)
 ]
