@@ -48,7 +48,8 @@ def attendance(req, courseId, lec_no):
             except Exception as e:
                 error = {'error': str(e)}
                 return error
-            percentage = (students_present/len(enrolled_students)) * 100
+            # percentage = (students_present/len(enrolled_students)) * 100
+            percentage = '{:.2f}'.format((students_present/no_of_students) * 100)
             stat = Lec_Stat(course=course, lec_no=lec_no, students_present=students_present, attendance_percentage=percentage)
             stat.save()
             all_total_attendance_percentage()
@@ -78,7 +79,8 @@ def attendance(req, courseId, lec_no):
                 attendance.student_status = student['student_status']
                 attendance.save()
         no_of_students = len(course.enrolled_students.all().values_list('roll_no', flat=True))
-        percentage = (students_present/no_of_students) * 100
+        # percentage = (students_present/no_of_students) * 100
+        percentage = '{:.2f}'.format((students_present/no_of_students) * 100)
         stat.students_present = students_present
         stat.attendance_percentage = percentage
         stat.save()

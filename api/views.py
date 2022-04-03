@@ -85,6 +85,14 @@ def course_lec_stats(req, course_id):
         return Response(res, status=400)
     return Response(res)
 
+# Get all courses avg attendance percentage
+@api_view(['GET'])
+def all_course_stats(req):
+    res = course_controllers.all_course_stats(req)
+    if 'error' in res:
+        return Response(res, status=400)
+    return Response(res)
+
 # View and Mark attendance for a course lec by id
 @api_view(['GET', 'POST', 'PATCH'])
 def attendance(req, courseId, lec_no):

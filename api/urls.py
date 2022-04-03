@@ -12,6 +12,7 @@ urlpatterns = [
     path('courses/', views.courses_detail),
     path('course/<int:course_id>/', views.course),
     path('course-lec-stats/<int:course_id>/', views.course_lec_stats),
+    path('all-course-stats/', views.all_course_stats),
     path('attendance/<int:courseId>/<int:lec_no>/', views.attendance),
     path('get-last-lec/<int:course_id>/', views.get_last_lecnum),
     path('defaulters/', views.getDefaulters),
