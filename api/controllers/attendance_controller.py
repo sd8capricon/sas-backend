@@ -49,7 +49,7 @@ def attendance(req, courseId, lec_no):
                 error = {'error': str(e)}
                 return error
             # percentage = (students_present/len(enrolled_students)) * 100
-            percentage = '{:.2f}'.format((students_present/no_of_students) * 100)
+            percentage = '{:.2f}'.format((students_present/len(enrolled_students)) * 100)
             stat = Lec_Stat(course=course, lec_no=lec_no, students_present=students_present, attendance_percentage=percentage)
             stat.save()
             all_total_attendance_percentage()
