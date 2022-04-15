@@ -40,14 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
+    'student.apps.StudentConfig',
     'rest_framework',
-    'rest_framework.authtoken'
+    # 'rest_framework.authtoken'
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication'
     ]
 }
@@ -88,18 +87,18 @@ WSGI_APPLICATION = 'SMS.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('PG_DB'),
-        'USER': os.environ.get('PG_USER'),
-        'PASSWORD': os.environ.get('PG_PASSWORD'),
-        'HOST': os.environ.get('PG_HOST'),
-        'PORT': os.environ.get('PG_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': os.environ.get('PG_DB'),
+    #     'USER': os.environ.get('PG_USER'),
+    #     'PASSWORD': os.environ.get('PG_PASSWORD'),
+    #     'HOST': os.environ.get('PG_HOST'),
+    #     'PORT': os.environ.get('PG_PORT'),
+    # }
 }
 
 
