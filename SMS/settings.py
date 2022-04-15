@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG')=='1'
+DEBUG = os.environ.get('DJANGO_DEBUG') == '1'
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['*']
@@ -41,8 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
     'student.apps.StudentConfig',
+    'faculty.apps.FacultyConfig',
     'rest_framework',
-    # 'rest_framework.authtoken'
+    'rest_framework.authtoken'
 ]
 
 REST_FRAMEWORK = {
