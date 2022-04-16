@@ -5,6 +5,7 @@ urlpatterns = [
     path('login/', views.login),
     path('verify/', views.verifyToken),
     path('students/', views.students_details),
+    path('student-old/<int:roll_no>/', views.student),
     path('cal-students-atten/', views.cal_total_attendance_percentage),
     path('teachers/', views.teachers_details),
     path('teacher/<int:teacher_id>/', views.teacher),
