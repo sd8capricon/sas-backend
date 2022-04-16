@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'student.apps.StudentConfig',
     'faculty.apps.FacultyConfig',
+    'course.apps.CourseConfig',
     'rest_framework',
     'rest_framework.authtoken'
 ]
