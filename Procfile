@@ -1,1 +1,1 @@
-web: gunicorn SMS.wsgi --log-file -
+web: gunicorn sas.wsgi --log-file -
