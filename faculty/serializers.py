@@ -10,7 +10,7 @@ class RegisterSerializer(serializers.ModelSerializer):
                   'username', 'password', 'email', 'type']
 
 
-class DisplaySerializer(serializers.ModelSerializer):
+class FacultyDisplaySerializer(serializers.ModelSerializer):
     class Meta:
         model = Faculty
         fields = ['user_id', 'f_name', 'l_name',
